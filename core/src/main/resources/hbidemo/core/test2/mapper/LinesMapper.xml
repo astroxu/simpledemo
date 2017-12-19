@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbidemo.core.test2.mapper.LinesMapper">
+    <resultMap id="BaseResultMap" type="hbidemo.core.test2.dto.Lines">
+        <result column="SALES_LINE_ID" property="salesLineId" jdbcType="DECIMAL" />
+        <result column="SALES_HEADER_ID" property="salesHeaderId" jdbcType="DECIMAL" />
+        <result column="COMMODITY_NUM" property="commodityNum" jdbcType="VARCHAR" />
+        <result column="COMMODITY_NAME" property="commodityName" jdbcType="VARCHAR" />
+        <result column="SALE_AMOUNT" property="saleAmount" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="selectSalesLineByHeaderId" resultMap="BaseResultMap">
+        SELECT csl.sales_line_id,
+        csl.sales_header_id,
+        csl.commodity_num,
+        csl.commodity_name,
+        csl.sale_amount
+        FROM sales_lines csl
+        WHERE csl.sales_header_id = #{salesHeaderId,jdbcType=DECIMAL}
+    </select>
+    <delete id="deleteSalesLineByHeaderId" parameterType="hbidemo.core.test2.dto.Lines">
+        delete from
+        sales_lines
+        where SALES_HEADER_ID = #{salesHeaderId,jdbcType=DECIMAL}
+    </delete>
+
+
+</mapper>

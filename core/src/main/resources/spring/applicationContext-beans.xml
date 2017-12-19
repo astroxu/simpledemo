@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- 文件上传配置 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 上传的最大限制 -->
+        <property name="maxUploadSize" value="209715200" />
+        <!-- 默认编码 -->
+        <property name="defaultEncoding" value="UTF-8" />
+        <!-- 上传文件的解析 -->
+        <property name="resolveLazily" value="true" />
+    </bean>
+   <!-- &lt;!&ndash;工作流的中的服务类要在，，，getBeanName的返回的值会在代理表达式中使用,注意这里需要将该类的包名加入到spring扫描的包路径中.
+在spring配置文件中添加
+&ndash;&gt;
+    <context:component-scan base-package="hbidemo.core.test3.service.impl"/>
+-->
+</beans>

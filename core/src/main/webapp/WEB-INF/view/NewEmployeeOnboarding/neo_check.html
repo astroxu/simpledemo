@@ -1,0 +1,256 @@
+<#include "../include/header.html">
+    <script>
+        var viewModel = kendo.observable({
+            model: {}
+        });
+        var NUM = '${RequestParameters.businessKey!0}';
+//          var NUM='TZ2017112116090001';
+    </script>
+    <style type="text/css">
+        html,body {
+
+            color:#333;
+        }
+        .approve-block {
+            padding:0px 20px 20px 20px;
+        }
+        .approve-block h3 {
+            font-weight: normal;
+            color:#000;
+            font-size:16px;
+        }
+        .approve-table {
+            border-collapse: collapse;
+            width: 800px;
+        }
+        .approve-table .item-label {
+            /*text-align:right;*/
+        }
+        .approve-table .item-value{
+            /*font-weight:bold;*/
+        }
+
+        .approve-table td {
+            padding:8px;
+            font-size:12px;
+            border: #e7ecf1 solid 1px;
+        }
+        #historyTable {
+            width: 800px;
+        }
+        #historyTable thead td{
+            padding:8px;
+            font-weight:bold;
+            color:#333;
+            font-size:14px;
+        }
+
+        #includeFrame {
+            border: none !important;
+            box-shadow: none;
+            height:100%;
+        }
+
+
+        #ta-comment {
+            padding:10px;
+            width: 700px;
+            height: 150px;
+            border: #e7ecf1 solid 1px;
+        }
+
+        .comment-too-long {
+            color: red;
+        }
+
+        .action_ok {
+            color: #5fb760;
+        }
+
+        .action_dangerous {
+            color: #eeac5f;
+        }
+
+        .action_custom {
+            color: #60c0dc;
+        }
+
+        button:before {
+            margin-right: 2px;
+        }
+
+        span[class^='fa']:before {
+            margin-right: 3px;
+        }
+
+
+    </style>
+    <body>
+    <div id="page-content">
+        <table onmouseover="required()" id="form"  class="approve-table" align="center">
+            <tr style="background-color:rgb(245,245,245)">
+                <td colspan="4" align="center"><font style="font-size: 17px;color: black"><br/><P><b>New Employee Onboarding Application Form</b></P></font></td>
+            </tr>
+            <tr id="basic" style="background-color:rgb(230,230,230)">
+                <td colspan="4">Basic Information</td>
+            </tr>
+
+            <tr id="sub"></tr>
+
+            <tr id="check" style="background-color:rgb(230,230,230)">
+                <td colspan="4">Check List</td>
+            </tr>
+            <tr id="ch"></tr>
+            <tr style="background-color: rgb(242,242,242)">
+                <td colspan="4" align="center">
+                    <span id="sub1" class="btn btn-primary k-grid-add" onclick="submits()">提交</span></td>
+            </tr>
+        </table>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p><hr></p>
+    </div>
+
+    <script type="text/javascript">
+
+
+        $.get("${base.contextPath}/lvmh/neo/application/query?num="+NUM, function (data) {
+
+            var htmls="";
+            var pname ="";
+            var pvalue ="";
+            var name_r="";
+            var value_td="";
+            $(data.rows).each(function (i,n) {
+                var tr = i+'tr'+i;
+                name_r = i+'name'+ i;
+                value_td = i+'value'+i;
+                if((i==(data.rows.length-1))&&(data.rows.length%2==1)){
+
+                    var tHTML = "<tr id='" + tr + "' style='background-color: rgb(255,255,255)'>" +
+                        "<td colspan='1' id='" + name_r + "' ></td>" +
+                        "<td colspan='1' id='" + value_td + "' >" +
+                        "</td>" +
+                        "<td colspan='1'></td>" +
+                        "<td colspan='1'></td></tr>"
+                    $("#sub").before(tHTML);
+                    $("#" + name_r + "").html(n.name);
+                    $("#" + value_td + "").html(n.value);
+
+                }else if(i%2==0){
+                    pname= n.name;
+                    pvalue = n.value;
+                    htmls = "";
+                    var trHTML ="<tr id='" + tr + "' style='background-color: rgb(255,255,255)'>" +
+                        "<td  width='25%' colspan='1' id='" + name_r + "' ></td>" +
+                        "<td  width='25%' colspan='1' id='" + value_td + "' ></td>"
+                    htmls = htmls +trHTML;
+                }else if(i%2==1){
+                    var tdHTML = "<td  width='25%' colspan='1' id='" + name_r + "' ></td>" +
+                        "<td  width='25%' colspan='1' id='" + value_td + "' ></td></tr>"
+                    htmls = htmls+ tdHTML;
+                    $("#sub").before(htmls);
+                    $("#" + name_r + "").html(n.name);
+                    $("#" + value_td + "").html(n.value);
+                    $("#" + (i-1) + "name" + (i-1) + "").html(pname);
+                    $("#" + (i-1) + "value" + (i-1) + "").html(pvalue);
+                }
+
+            });
+
+        });
+
+        $.get("${base.contextPath}/lvmh/neo/set/it/query", function (data) {
+
+                var htmls="";
+                var pname ="";
+                var name_r="";
+                var value_td="";
+                $(data.rows).each(function (i,n) {
+                    var inputId = 'input'+i;
+                    var tr = 'tr'+i;
+                    name_r = 'name' + i;
+                    value_td = 'value'+i;
+                     if((i==(data.rows.length-1))&&(data.rows.length%2==1)){
+
+                            var tHTML = "<tr id='" + tr + "' style='background-color: rgb(255,255,255)'>" +
+                                "<td colspan='1' id='" + name_r + "' ></td>" +
+                                "<td colspan='1' id='" + value_td + "' >" +
+                                "<input id='" + inputId + "'  type='text' style='width: 100%' class='k-textbox' /></td>" +
+                                "<td colspan='1'></td>" +
+                                "<td colspan='1'></td></tr>"
+                            $("#ch").before(tHTML);
+                            $("#" + name_r + "").html(n.name);
+                        }else if(i%2==0){
+                            pname= n.name;
+                            htmls = "";
+                            var trHTML ="<tr id='" + tr + "' style='background-color: rgb(255,255,255)'>" +
+                                "<td colspan='1' id='" + name_r + "' ></td>" +
+                                "<td colspan='1' id='" + value_td + "' ><input id='" + inputId + "'  type='text' style='width: 100%' class='k-textbox' /></td>"
+                            htmls = htmls +trHTML;
+                        }else if(i%2==1){
+                            var tdHTML = "<td colspan='1' id='" + name_r + "' ></td>" +
+                                "<td colspan='1' id='" + value_td + "' ><input id='" + inputId + "'  type='text' style='width: 100%' class='k-textbox' /></td></tr>"
+                            htmls = htmls+ tdHTML;
+                            $("#ch").before(htmls);
+                            $("#" + name_r + "").html(n.name);
+                            $("#name" + (i-1) + "").html(pname);
+                        }
+                });
+
+            });
+        var validator = $("#form").kendoValidator({
+            invalidMessageType : "tooltip"
+        }).data("kendoValidator");
+
+        function required(){
+            $.get("${base.contextPath}/lvmh/neo/set/it/query", function (data) {
+                $(data.rows).each(function (i,n) {
+                    var name = 'msg'+i;
+                    if(n.required=='Y'){
+                        $("#input"+i+"").attr("required","required");
+                        $("#input"+i+"").attr("data-label",n.name);    //提示信息
+                        $("#input"+i+"").attr("name",name);
+                    }
+                })
+            })
+        }
+        function submits(){
+
+            if (validator.validate()) {
+                var dto = [];
+                var pname = "";
+                $.each($("td"), function (i) {
+
+                    if ($("td").eq(i).find("input").attr("type")) {   //input存在则循环(input标签是否存在用find)
+                        var demo = {name: 0, value: 0};
+                        demo.name = $("td").eq(i - 1).text();
+                        demo.value = $("td:eq(" + i + ") input").val();
+                        dto.push(demo);
+                    }
+                })
+                $.ajax({
+                    type: "GET",
+                    url: "${base.contextPath}/lvmh/neo/check/submit/test?num="+NUM,
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: {dtos: JSON.stringify(dto)},
+                    success: function (args) {
+                        if (args.success == true) {
+                            kendo.ui.showInfoDialog({
+                                message: "申请提交成功",
+                            });
+                        } else {
+                            kendo.ui.showErrorDialog({
+                                width: 600,
+                                message: args.message
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    </body>
+    </html>

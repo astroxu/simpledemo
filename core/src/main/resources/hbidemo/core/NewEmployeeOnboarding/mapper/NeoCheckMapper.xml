@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbidemo.core.NewEmployeeOnboarding.mapper.NeoCheckMapper">
+    <resultMap id="BaseResultMap" type="hbidemo.core.NewEmployeeOnboarding.dto.NeoCheck">
+        <result column="ID" property="id" jdbcType="DECIMAL" />
+        <result column="C_NAME" property="cName" jdbcType="VARCHAR" />
+        <result column="C_VALUE" property="cValue" jdbcType="VARCHAR" />
+        <result column="C_NUM" property="cNum" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="select" resultMap="BaseResultMap" parameterType="hbidemo.core.NewEmployeeOnboarding.dto.NeoCheck">
+        SELECT * FROM lvmh_neo_check
+        WHERE 1=1
+        <if test="cNum!=null">
+            AND C_NUM = #{cNum, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+</mapper>

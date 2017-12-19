@@ -1,0 +1,161 @@
+<#include "../include/header.html">
+<script type="text/javascript">
+    //销售头
+    var isedit = '${RequestParameters.isedit!0}' === '1';
+
+    viewModel = kendo.observable({
+        model: {}
+    });
+
+    if (isedit) {
+        $.ajax({
+            url: '${base.contextPath}/sales/header/query?salesId=${RequestParameters.salesId!0}',
+            type: "post",
+            success: function (args) {
+                var a0 = args.rows[0] || {};
+                for (var k in a0) {
+                    viewModel.model.set(k, a0[k]);
+                }
+            }
+        });
+    }
+</script>
+<body>
+<div id="page-content" style="width: 580px">
+    <form id="mainform" class="form-horizontal" style="width: 550px">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-xs-2 col-xs-offset-1 control-label" style="text-align: right"><@spring.message "header.salesnum"/></label>
+                <div class="col-xs-6">
+                    <input id="salesNum" type="text" data-bind="value:model.salesNum" class="k-textbox" style="width: 100%">
+                    <script>kendo.bind($('#salesNum'),viewModel)</script>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-xs-2 col-xs-offset-1 control-label" style="text-align: right"><@spring.message "header.amount"</label>
+                <div class="col-xs-6">
+                    <input id="saleamount" type="text" data-bind="value:model.amount" class="k-textbox" style="width: 100%;">
+                    <script>
+                        kendo.bind($('#saleamount'), viewModel);
+                    </script>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="grid-container" style="clear: both;width: 590px">
+    <div id="salesLinesGrid" style="margin-left: 10px"></div>
+</div>
+
+<script>
+    var BaseUrl = "${base.contextPath}/sales/lines";//_basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/queryByHeaderId?salesHeaderId=${RequestParameters.salesId!0}",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type);  //提交参数处理
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)  //查询参数处理
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "salesLineId",
+                fields: {
+                    salesHeaderId:{defaultValue:"${RequestParameters.salesId!0}"}
+                }
+            }
+        }
+    });
+
+    //数据源
+    var grid = $("#salesLinesGrid").kendoGrid({
+        dataSource: dataSource,
+        navigatable: false,
+        hight: '300px',
+        resizable: true,
+        scrollable: true,
+        selectable: 'multiple, rowbox',
+        toolbar: [{
+            name: "create",
+            template: '<span class="btn btn-primary k-grid-add" ><@spring.message "hap.new"/></span>'},{
+            template: ' <span id="saveGrid" class="btn btn-success k-grid-save-changes"><@spring.message "hap.save"/></span>'
+        },{
+            template: ' <span onclick="deleteDate()" class="btn btn-danger"><@spring.message "hap.delete"/></span>'
+        }],
+        columns:[
+            {
+                field: "commodityNum",
+                title: '<@spring.message "lines.commoditynum"/>',
+                width: 80
+            },
+            {
+                field: "commodityName",
+                title: '<@spring.message "lines.commodityname"/>',
+                width: 120
+            },
+            {
+                field: "saleAmount",
+                title: '<@spring.message "lines.saleamount"/>',
+                width: 120
+            }
+        ],editable: true
+    }).data("kendoGrid");
+
+    //删除方法
+    function deleteDate() {
+        Hap.deleteGridSelection({
+            grid: $('#salesLinesGrid')
+        });
+    }
+
+    $("#saveGrid").click(function () {
+        //grid保存
+        viewModel.model.__status = isedit ? 'update' : 'add';
+        //保存行
+        $('#salesLinesGrid').data('kendoGrid').saveChange();
+        //保存头  表单提交
+        Hap.submitForm({
+            url: '${base.contextPath}/sales/header/submit', //提交路径url
+            formModel: viewModel.model,  //所需提交的formModel
+            success:function (data) {  //回调函数（如：success()）
+                grid.dataSource.query();
+                if (isedit){
+                    window.parent.$("#editWin").data("kendoWindow").close();
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

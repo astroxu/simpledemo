@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbidemo.core.test3.mapper.PictureMapper">
+    <resultMap id="BaseResultMap" type="hbidemo.core.test3.dto.Picture">
+        <result column="picture_id" property="pictureId" jdbcType="DECIMAL" />
+        <result column="supplier_id" property="supplierId" jdbcType="DECIMAL" />
+        <result column="pic_name" property="picName" jdbcType="VARCHAR" />
+        <result column="pic_size" property="picSize" jdbcType="VARCHAR" />
+        <result column="pic_type" property="picType" jdbcType="VARCHAR" />
+        <result column="pic_path" property="picPath" jdbcType="VARCHAR" />
+        <result column="pic_save_date" property="picSaveDate" jdbcType="DATE" />
+    </resultMap>
+    <insert id="inserti" parameterType="hbidemo.core.test3.dto.Picture">
+        insert into supplier_picture(pic_name,pic_size,pic_type,pic_path,pic_save_date)
+        VALUES
+        (#{picName,jdbcType=VARCHAR},
+        #{picSize,jdbcType=VARCHAR},
+        #{picType,jdbcType=VARCHAR},
+        #{picPath,jdbcType=VARCHAR},
+        #{picSaveDate,jdbcType=DATE}
+        )
+    </insert>
+
+    <select id="queryBySupplierId" resultMap="BaseResultMap" parameterType="Long" >
+        SELECT
+        *
+        FROM
+        supplier_picture sp
+        WHERE sp.supplier_id = #{var2,jdbcType=DECIMAL}
+    </select>
+
+
+
+    <select id="queryBypictureId" resultMap="BaseResultMap" parameterType="Long" >
+        SELECT
+        *
+        FROM
+        supplier_picture sp
+        WHERE sp.picture_id = #{var2,jdbcType=DECIMAL}
+    </select>
+
+    <delete id="deleteBypictureId" parameterType="Long" >
+        DELETE
+        FROM
+        supplier_picture
+        WHERE picture_id = #{var2,jdbcType=DECIMAL}
+    </delete>
+
+   <!-- <update id="updateStudents" parameterType="hbidemo.core.test3.dto.Picture">
+        UPDATE hr_org_unit_b oub
+        SET oub.STUDENT_NAME = #{studentName,jdbcType=VARCHAR},
+        sts.AGE = #{age,jdbcType=DECIMAL},
+        sts.BIRTHDAY = #{birthday,jdbcType=DATE}
+        WHERE sts.STUDENT_ID = #{studentId,jdbcType=DECIMAL}
+    </update>-->
+</mapper>
